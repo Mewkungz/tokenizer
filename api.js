@@ -4,7 +4,12 @@ var port = process.env.PORT || 7777;
 var request = require('request');
 const utf8 = require('utf8');
 var getJSON = require('get-json')
- 
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.get('/:text', function (req, res) {
 	var text = req.params.text

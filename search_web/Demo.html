@@ -2,6 +2,7 @@
 <html>
 <!--เครดิต https://www.google.com/intl/en/chrome/demos/speech.html-->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<script src="script.js"></script> 
 <style>
 #info {
@@ -110,7 +111,6 @@ if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
 }else{
  showInfo('info_upgrade');
 }
-
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
 var recognition = new SpeechRecognition()
 // recognition.lang = 'th-TH'
@@ -136,8 +136,16 @@ recognition.onend = function() {
   //console.log('Speech recognition service disconnected');
   start_button.style.display = 'inline-block';
   record_button.style.display = 'none';
-  url = "http://localhost:7777/" + final_transcript;
-  window.location.replace(url);
+  url = "http://localhost:7777/"+final_transcript ;
+  //window.location.replace(url);
+  var xhr = new XMLHttpRequest();
+  xhr.addEventListener("load", reqListener);
+  xhr.open('GET',url, true);
+  xhr.send();
+}
+
+function reqListener () {
+  console.log(this.responseText);
 }
 
 recognition.onerror = function(event) {
@@ -173,7 +181,7 @@ recognition.onresult = function(event) {
 	  console.log(text_msg , " ,confidence:", speechRecognitionAlternative.confidence)  
       if (event.results[i].isFinal) {
         //final_transcript += event.results[i][0].transcript + '&nbsp';	
-		final_transcript += text_msg + '&nbsp';			
+		final_transcript += text_msg;			
       } else { 
 		//interim_transcript +=  event.results[i][0].transcript;
 		interim_transcript += text_msg;		
