@@ -96,10 +96,15 @@
 	<img alt="Stop" id="stop_img"  src="https://www.google.com/intl/en/chrome/assets/common/images/content/mic-animate.gif">
    </button>
   </div>
-    		
+ <div id="id01"></div>	
 
 
 <script>
+var xhr = new XMLHttpRequest();
+var xhr1 = new XMLHttpRequest();
+var arr = [];
+var arrout=[];
+
 if ('SpeechSynthesisUtterance' in window) {  
 	// Your browser support for Speech Synthesis.
 } else{
@@ -136,16 +141,52 @@ recognition.onend = function() {
   //console.log('Speech recognition service disconnected');
   start_button.style.display = 'inline-block';
   record_button.style.display = 'none';
+
   url = "http://localhost:7777/"+final_transcript ;
   //window.location.replace(url);
-  var xhr = new XMLHttpRequest();
+
   xhr.addEventListener("load", reqListener);
   xhr.open('GET',url, true);
   xhr.send();
 }
 
 function reqListener () {
-  console.log(this.responseText);
+  arr = this.responseText;
+  var out = '';
+  var i;
+
+  for(i = 1; i < arr.length-1; i++) {
+      if (arr[i]==",") {
+        arrout.push(out);
+        out = ''
+      }
+      else if(arr[i] != '\"' )
+      {
+        out += arr[i];
+      }
+  }
+  console.log(arrout);
+
+  for (var j = 0; j <= arrout.length-1 ; j++) {
+  //window.location.replace(url);
+
+    xhr1.addEventListener("load", reqListener2);
+    xhr1.open('GET',arrout[j], true);
+    xhr1.send();
+  }
+}
+var result = [];
+function reqListener2 () {
+  var data = [];
+  var result = [];
+  var temp ='';
+  data = this.responseText;
+  for(i = 1; i < data.length-1; i++) {
+        temp += data[i];
+  }
+  result.push(temp)
+  console.log(result)
+  document.getElementById("id01").innerHTML = result;
 }
 
 recognition.onerror = function(event) {

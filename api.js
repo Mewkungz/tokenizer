@@ -18,8 +18,10 @@ app.get('/:text', function (req, res) {
 	var url = 'https://us-central1-aofs-project.cloudfunctions.net/realestateApi/api/v1/projects?search='+token;
 	url = utf8.encode(url);
 	//res.redirect(url);
+	var result =[];
 	getJSON(url, function(error, response){
-    	return res.status(200).send(response)
+		result = response ;
+    	return res.status(200).send(result)
 	});
 });
 
