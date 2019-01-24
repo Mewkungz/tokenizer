@@ -101,7 +101,6 @@
 
 <script>
 var xhr = new XMLHttpRequest();
-var xhr1 = new XMLHttpRequest();
 var arr = [];
 var arrout=[];
 
@@ -128,12 +127,16 @@ recognition.onspeechend = function() {
 }
 var final_transcript = ""
 var start_timestamp;
+var result = [];
+var data = [];
+var temp ='';
 
 recognition.onstart = function() {
     //start_img.src = 'images/mic-animate.gif';
 	showInfo('info_speak_now');
 	record_button.style.display = 'inline-block';
   };
+
 recognition.onend = function() {
   var url = "";
   //start_img.src = 'images/mic.gif';
@@ -145,9 +148,36 @@ recognition.onend = function() {
   url = "http://localhost:7777/"+final_transcript ;
   //window.location.replace(url);
 
-  xhr.addEventListener("load", reqListener);
+  //xhr.addEventListener("load", reqListener);
   xhr.open('GET',url, true);
+  xhr.responseType ="json"
   xhr.send();
+
+  xhr.onload = function () {
+  if (xhr.readyState === xhr.DONE && xhr.status === 200) {
+    arr = xhr.response;
+    for (var i = 0; i <= arr.length -1; i++) {
+      
+      (function(i){
+      var xhr1 = new XMLHttpRequest();
+      console.log(arr[i])
+      xhr1.open('GET',arr[i], true);
+      xhr1.responseType ="json"
+      xhr1.send();
+
+      xhr1.onreadystatechange = function () {
+        if (xhr1.readyState === xhr1.DONE && xhr1.status === 200) {
+          result[i] =  xhr1.response;
+          console.log(i)
+          //console.log(result[i]);
+          }
+          console.log(result);
+          document.getElementById("id01").innerHTML = JSON.stringify(result);
+        };
+        })(i);
+      }
+    }
+  };
 }
 
 function reqListener () {
@@ -169,22 +199,19 @@ function reqListener () {
 
   for (var j = 0; j <= arrout.length-1 ; j++) {
   //window.location.replace(url);
-
+    console.log(arrout[j]);
     xhr1.addEventListener("load", reqListener2);
     xhr1.open('GET',arrout[j], true);
     xhr1.send();
   }
 }
-var result = [];
+
 function reqListener2 () {
-  var data = [];
-  var result = [];
-  var temp ='';
   data = this.responseText;
   for(i = 1; i < data.length-1; i++) {
         temp += data[i];
   }
-  result.push(temp)
+  result.push(temp)  
   console.log(result)
   document.getElementById("id01").innerHTML = result;
 }
